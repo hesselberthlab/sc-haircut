@@ -1,0 +1,5 @@
+' --minimum-length=2 '
+' -a GCTTTAAGGCCGGTCCTAGCAA '
+' -g AAGCAGTGGTATCAACGCAGAGTACATGGG '
+'JH145_2.trim'
+'select[mem>4] rusage[mem=4]'

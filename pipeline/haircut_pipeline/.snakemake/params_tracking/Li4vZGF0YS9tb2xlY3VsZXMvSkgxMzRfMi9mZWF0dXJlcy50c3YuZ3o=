@@ -1,0 +1,6 @@
+'../data/molecules/JH134_2'
+'../data/molecules/JH134_2/barcodes.tsv'
+'../data/molecules/JH134_2/features.tsv'
+'../data/molecules/JH134_2/molecules.tsv'
+'JH134_2.convert'
+'select[mem>16] rusage[mem=16]'

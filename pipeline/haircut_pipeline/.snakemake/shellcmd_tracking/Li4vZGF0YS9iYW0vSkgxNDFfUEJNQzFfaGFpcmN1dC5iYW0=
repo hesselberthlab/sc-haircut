@@ -1,0 +1,4 @@
+
+        bowtie2           -x /beevol/home/riemondy/Projects/various_repos/haircut_pipeline/dbases/genome/hairpin           --threads 12            --norc            ../data/fastqs/JH141_PBMC1_R2_umi_trimmed.fastq.gz           | samtools view -bS           | samtools sort -@ 11           > ../data/bam/JH141_PBMC1_haircut.bam  
+
+      

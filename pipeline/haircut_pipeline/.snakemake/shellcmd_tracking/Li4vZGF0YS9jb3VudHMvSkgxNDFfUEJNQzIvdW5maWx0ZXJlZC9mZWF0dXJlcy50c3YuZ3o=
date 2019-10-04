@@ -1,0 +1,3 @@
+
+    R -e 'scrunchy::umitools_to_mtx("../data/counts/JH141_PBMC2/umitools_counts.tsv.gz", "../data/counts/JH141_PBMC2/unfiltered")' 
+    

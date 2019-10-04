@@ -1,0 +1,4 @@
+
+        bowtie2           -x ../genome/hairpin           --threads 12            --norc            ../processed_data/fastqs/JH160_pbmc_15_R2_umi_trimmed.fastq.gz           | samtools view -bS           | samtools sort -@ 11           > ../processed_data/bam/JH160_pbmc_15_haircut.bam  
+
+      

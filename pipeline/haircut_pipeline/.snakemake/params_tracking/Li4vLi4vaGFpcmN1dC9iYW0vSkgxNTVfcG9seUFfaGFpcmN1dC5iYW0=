@@ -1,0 +1,4 @@
+' --norc '
+'../../genome/hairpin'
+'JH155_polyA.bt2'
+'select[mem>30] rusage[mem=30]'

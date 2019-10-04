@@ -1,0 +1,5 @@
+
+      src/tag_bam ../data/bam/JH134_2_haircut.bam ../data/bam/JH134_2_haircut_tagged.bam "_" 2 3
+      
+      samtools index ../data/bam/JH134_2_haircut_tagged.bam
+      

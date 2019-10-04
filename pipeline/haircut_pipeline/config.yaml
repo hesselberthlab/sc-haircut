@@ -1,0 +1,29 @@
+# config file for processing functional count data 
+
+RAW_DATA:
+    # path to input raw haircut fastqs
+    "/beevol/home/richerm/projects/10x_haircut/20190819/data/repair"
+DATA:
+    # path to output data files
+    "../processed_data"
+
+HAIRCUT_FASTA:
+    "../20190819/genome/hairpin.fa"
+
+HAIRCUT_SAMPLES:
+    - JH160_pbmc_60
+
+10X_WHITELIST:
+    # known barcodes used in the 10x libraires to use for error correction
+    "/cluster/software/modules-sw/cellranger/3.0.2/cellranger-cs/3.0.2/lib/python/cellranger/barcodes/737K-august-2016.txt"
+
+CELL_BARCODES:
+    # barcodes considered to be cells based on cellrange count run on mRNA
+    # data
+    - "/beevol/home/richerm/projects/10x_haircut/20190819/JH157_pbmc_60_mrna/outs/filtered_feature_bc_matrix/barcodes.tsv.gz"
+
+SRC:
+    # path to directory with source code " 
+    "src"
+
+

@@ -1,0 +1,35 @@
+shell.executable("/bin/bash")
+shell.prefix("source ~/.bash_profile; ")
+import os 
+
+""" Snakefile for running 10x pipeline """
+
+configfile: "config.yaml"
+
+RAW_DATA = config["RAW_DATA"]
+DATA = config["DATA"]
+HC_SAMPLES = config["HAIRCUT_SAMPLES"]
+BC_WHITELIST = config["10X_WHITELIST"]
+MRNA_BARCODES = config["CELL_BARCODES"]
+HAIRCUT_FASTA = config["HAIRCUT_FASTA"]
+SRC = config["SRC"]
+
+hc_to_10x_map = {}
+for idx, sample in enumerate(HC_SAMPLES):
+    hc_to_10x_map[sample] = MRNA_BARCODES[idx]
+
+rule all:
+    input:
+      expand("{data}/fastqs/{sample}_{read_id}_umi.fastq.gz",
+        data = DATA, sample = HC_SAMPLES, read_id = ["R1", "R2"]),
+
+      expand(os.path.join("{data}", "counts",
+        "{sample}", "umitools_counts.tsv.gz"),
+        data = DATA, sample = HC_SAMPLES),
+      
+      expand(os.path.join("{data}", "bam",
+        "{sample}_haircut_umitagged_sorted.bam"),
+         data = DATA, sample = HC_SAMPLES),
+
+include: "rules/haircut_count.snake"
+

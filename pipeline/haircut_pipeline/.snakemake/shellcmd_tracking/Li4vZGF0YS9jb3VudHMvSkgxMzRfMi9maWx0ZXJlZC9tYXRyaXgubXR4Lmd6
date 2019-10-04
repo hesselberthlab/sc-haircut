@@ -1,0 +1,3 @@
+
+    R -e 'scrunchy::filter_matrix("../data/counts/JH134_2/unfiltered","/beevol/home/riemondy/Projects/various_repos/haircut_pipeline/2019-03-20_mrna/JH133/outs/filtered_feature_bc_matrix/barcodes.tsv.gz", "../data/counts/JH134_2/filtered")' 
+    

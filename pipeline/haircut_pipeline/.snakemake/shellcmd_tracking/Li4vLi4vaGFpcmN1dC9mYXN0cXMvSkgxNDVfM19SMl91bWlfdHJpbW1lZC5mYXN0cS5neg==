@@ -1,0 +1,3 @@
+
+      cutadapt          -a GCTTTAAGGCCGGTCCTAGCAA           -g AAGCAGTGGTATCAACGCAGAGTACATGGG           --minimum-length=2          -o ../../haircut/fastqs/JH145_3_R2_umi_trimmed.fastq.gz         ../../haircut/fastqs/JH145_3_R2_umi.fastq.gz
+      

@@ -1,0 +1,3 @@
+/beevol/home/richerm/projects/10x_haircut/20190419/raw_data/haircut/JH145_3_S70_L004_R1_001.fastq.gz
+/beevol/home/richerm/projects/10x_haircut/20190419/raw_data/haircut/JH145_3_S70_L004_R2_001.fastq.gz
+/cluster/software/modules-sw/cellranger/3.0.2/cellranger-cs/3.0.2/lib/python/cellranger/barcodes/3M-february-2018.txt.gz

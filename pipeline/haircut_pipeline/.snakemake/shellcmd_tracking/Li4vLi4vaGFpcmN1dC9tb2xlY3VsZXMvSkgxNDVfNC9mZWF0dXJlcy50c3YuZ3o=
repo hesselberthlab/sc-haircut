@@ -1,0 +1,6 @@
+
+    src/get_molecule_info ../../haircut/bam/JH145_4_haircut_umitagged_sorted.bam ../../haircut/molecules/JH145_4
+    gzip ../../haircut/molecules/JH145_4/molecules.tsv
+    gzip ../../haircut/molecules/JH145_4/features.tsv
+    gzip ../../haircut/molecules/JH145_4/barcodes.tsv
+    

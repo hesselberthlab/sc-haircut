@@ -1,0 +1,4 @@
+
+        bowtie2           -x ../../genome/hairpin           --threads 12            --norc            ../../haircut/fastqs/JH145_1_R2_umi_trimmed.fastq.gz           | samtools view -bS           | samtools sort -@ 11           > ../../haircut/bam/JH145_1_haircut.bam  
+
+      

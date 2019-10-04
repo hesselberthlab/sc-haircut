@@ -1,0 +1,3 @@
+
+      umi_tools group         --read-length True         --per-cell         -I ../../haircut/bam/JH145_4_haircut_tagged.bam         --output-bam True         --output-unmapped True         -S ../../haircut/bam/JH145_4_haircut_umitagged.bam
+      

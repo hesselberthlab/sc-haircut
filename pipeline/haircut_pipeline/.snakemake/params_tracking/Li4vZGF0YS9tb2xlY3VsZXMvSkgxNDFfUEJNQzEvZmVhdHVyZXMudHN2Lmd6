@@ -1,0 +1,6 @@
+'../data/molecules/JH141_PBMC1'
+'../data/molecules/JH141_PBMC1/barcodes.tsv'
+'../data/molecules/JH141_PBMC1/features.tsv'
+'../data/molecules/JH141_PBMC1/molecules.tsv'
+'JH141_PBMC1.convert'
+'select[mem>16] rusage[mem=16]'

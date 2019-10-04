@@ -1,0 +1,6 @@
+
+    src/get_molecule_info ../data/bam/JH134_2_haircut_umitagged_sorted.bam ../data/molecules/JH134_2
+    gzip ../data/molecules/JH134_2/molecules.tsv
+    gzip ../data/molecules/JH134_2/features.tsv
+    gzip ../data/molecules/JH134_2/barcodes.tsv
+    

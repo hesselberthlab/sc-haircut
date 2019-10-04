@@ -1,0 +1,5 @@
+' --minimum-length=2 '
+' -a AAAAAAAAAA '
+' -g AAGCAGTGGTATCAACGCAGAGTACATGGG '
+'JH160_pbmc_60.trim'
+'select[mem>4] rusage[mem=4]'

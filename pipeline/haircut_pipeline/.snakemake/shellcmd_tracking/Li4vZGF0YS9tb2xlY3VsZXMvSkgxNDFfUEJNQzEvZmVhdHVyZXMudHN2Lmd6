@@ -1,0 +1,6 @@
+
+    src/get_molecule_info ../data/bam/JH141_PBMC1_haircut_umitagged_sorted.bam ../data/molecules/JH141_PBMC1
+    gzip ../data/molecules/JH141_PBMC1/molecules.tsv
+    gzip ../data/molecules/JH141_PBMC1/features.tsv
+    gzip ../data/molecules/JH141_PBMC1/barcodes.tsv
+    

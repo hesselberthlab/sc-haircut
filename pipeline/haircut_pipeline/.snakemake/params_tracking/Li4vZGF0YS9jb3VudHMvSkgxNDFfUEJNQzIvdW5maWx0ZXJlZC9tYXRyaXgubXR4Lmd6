@@ -1,0 +1,3 @@
+'../data/counts/JH141_PBMC2/unfiltered'
+'JH141_PBMC2.convert'
+'select[mem>16] rusage[mem=16]'

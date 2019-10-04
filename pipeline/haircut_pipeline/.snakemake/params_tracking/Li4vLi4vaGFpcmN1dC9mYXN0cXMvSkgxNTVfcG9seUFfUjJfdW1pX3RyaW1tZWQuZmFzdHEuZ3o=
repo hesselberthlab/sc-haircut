@@ -1,0 +1,5 @@
+' --minimum-length=2 '
+' -a AAAAAAAAAA '
+' -g AAGCAGTGGTATCAACGCAGAGTACATGGG '
+'JH155_polyA.trim'
+'select[mem>4] rusage[mem=4]'

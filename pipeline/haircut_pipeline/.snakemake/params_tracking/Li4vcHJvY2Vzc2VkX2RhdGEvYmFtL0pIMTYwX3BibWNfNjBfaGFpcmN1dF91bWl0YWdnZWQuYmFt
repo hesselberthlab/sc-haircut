@@ -1,0 +1,2 @@
+'JH160_pbmc_60.group'
+'select[mem>32] rusage[mem=32]'

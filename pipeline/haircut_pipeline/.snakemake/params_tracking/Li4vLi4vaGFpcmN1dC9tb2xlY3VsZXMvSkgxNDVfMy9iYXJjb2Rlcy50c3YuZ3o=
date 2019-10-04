@@ -1,0 +1,6 @@
+'../../haircut/molecules/JH145_3'
+'../../haircut/molecules/JH145_3/barcodes.tsv'
+'../../haircut/molecules/JH145_3/features.tsv'
+'../../haircut/molecules/JH145_3/molecules.tsv'
+'JH145_3.convert'
+'select[mem>16] rusage[mem=16]'

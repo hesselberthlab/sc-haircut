@@ -1,0 +1,3 @@
+
+      umi_tools count         --per-gene         --gene-tag=XT         --per-cell         -I ../../haircut/bam/JH145_1_haircut_tagged.bam ../../haircut/bam/JH145_1_haircut_tagged.bam.bai         -S ../../haircut/counts/JH145_1/umitools_counts.tsv.gz 
+      

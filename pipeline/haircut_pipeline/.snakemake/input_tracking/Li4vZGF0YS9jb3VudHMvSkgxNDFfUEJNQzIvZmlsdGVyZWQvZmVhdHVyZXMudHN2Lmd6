@@ -1,0 +1,4 @@
+../data/counts/JH141_PBMC2/unfiltered/barcodes.tsv.gz
+../data/counts/JH141_PBMC2/unfiltered/features.tsv.gz
+../data/counts/JH141_PBMC2/unfiltered/matrix.mtx.gz
+/beevol/home/riemondy/Projects/various_repos/haircut_pipeline/2019-03-20_mrna/JH140_PBMC2/outs/filtered_feature_bc_matrix/barcodes.tsv.gz

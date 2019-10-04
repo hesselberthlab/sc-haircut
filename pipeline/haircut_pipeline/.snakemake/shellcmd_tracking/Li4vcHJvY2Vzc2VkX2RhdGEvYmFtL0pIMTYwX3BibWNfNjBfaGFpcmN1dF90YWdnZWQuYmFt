@@ -1,0 +1,5 @@
+
+      src/tag_bam ../processed_data/bam/JH160_pbmc_60_haircut.bam ../processed_data/bam/JH160_pbmc_60_haircut_tagged.bam "_" 2 3
+      
+      samtools index ../processed_data/bam/JH160_pbmc_60_haircut_tagged.bam
+      

@@ -1,0 +1,4 @@
+'../data/counts/JH141_PBMC1/filtered'
+'../data/counts/JH141_PBMC1/unfiltered'
+'JH141_PBMC1.filter'
+'select[mem>16] rusage[mem=16]'

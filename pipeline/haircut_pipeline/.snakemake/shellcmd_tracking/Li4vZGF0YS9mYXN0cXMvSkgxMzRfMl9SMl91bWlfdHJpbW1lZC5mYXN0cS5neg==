@@ -1,0 +1,3 @@
+
+      cutadapt          -a AAAAAAAAAAA           -g AAGCAGTGGTATCAACGCAGAGTACATGGG           --minimum-length=2          -o ../data/fastqs/JH134_2_R2_umi_trimmed.fastq.gz         ../data/fastqs/JH134_2_R2_umi.fastq.gz
+      

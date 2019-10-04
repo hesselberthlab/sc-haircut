@@ -1,0 +1,3 @@
+'../../genome/hairpin'
+'bt2_idx'
+'select[mem>30] rusage[mem=30]'
