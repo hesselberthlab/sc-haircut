@@ -196,8 +196,26 @@ get_hairpin_coverage <- function(s, var = "celltype") {
 }
 
 
-activity_plot <- function(df, vline = c(2, 4, 6)){
-        ggplot(df, aes(y = celltype, x = activity, color = celltype)) + 
+activity_plot <- function(df, vline = c(2, 4, 6), lab = NULL){
+        lab <- enquo(lab)
+        if(!is.null(lab)) { 
+                p <- ggplot(df, aes(y = celltype, x = activity, color = celltype)) + 
+                        ggbeeswarm::geom_quasirandom(aes(alpha = !!lab), 
+                                                     size = 0.5, 
+                                                     groupOnX = F,
+                                                     dodge.width = 1) +
+                        scale_color_manual(values = colors) + 
+                        theme_cowplot() + 
+                        theme(legend.position = 'none', 
+                              strip.placement = "outside",
+                              strip.background = element_blank(),
+                        ) +
+                        ylab(NULL) + 
+                        geom_vline(xintercept = vline, color =  "#999999",
+                                   alpha = 0.5, linetype = "dotted")
+        }
+        else {
+        p <- ggplot(df, aes(y = celltype, x = activity, color = celltype)) + 
                 ggbeeswarm::geom_quasirandom(size = 0.5, groupOnX = F) +
                 scale_color_manual(values = colors) + 
                 theme_cowplot() + 
@@ -207,8 +225,9 @@ activity_plot <- function(df, vline = c(2, 4, 6)){
                 ) +
                 ylab(NULL) + 
                 geom_vline(xintercept = vline, color =  "#999999",
-                           alpha = 0.5, linetype = "dotted")
-        
+                           alpha = 0.5, linetype = "dotted") 
+                }
+        p
 }
 
 get_single_cell_df <- function(s, feat){
