@@ -1,20 +1,12 @@
----
-title: "Heterogeneity of biochemical phenotypes and gene expression among single cells"
-output: rmarkdown::github_document
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE,
-                      message = F,
-                      warning = F)
-source("scripts/functions.R")
-library(ggpmisc)
-```
+Heterogeneity of biochemical phenotypes and gene expression among single
+cells
+================
 
 ## Functional barnyard experiment
 
 #### Barnyard plot
-```{r classifycells}
+
+``` r
 load("../data/barnyard/barnyard.seurat.object.Rdata")
 
 #Getting hairpin info from seurat object
@@ -76,9 +68,11 @@ df %>% filter(position == repair_position) %>%
                  vjust = .5, hjust = 0)
 ```
 
+![](README_files/figure-gfm/classifycells-1.png)<!-- -->
+
 #### Bulk coverage
 
-```{r bulk plots}
+``` r
 barnyard_seurat$cell_id_from_repair <- color_df$color 
 barnyard_seurat$celltype <- barnyard_seurat$cell_id_from_repair
 bulk_df = get_hairpin_coverage(barnyard_seurat) %>%
@@ -110,31 +104,35 @@ bulk_df %>% filter(hairpin == "riboG",
 plot_grid(p1, p2)
 ```
 
+![](README_files/figure-gfm/bulk%20plots-1.png)<!-- -->
+
 #### mRNA expression vs DNA repair
 
-```{r}
+``` r
 FeaturePlot(object = barnyard_seurat, features = c("repair_Uracil-45", "repair_riboG-44",
                                                    "UNG", "RNASEH2C"), 
             reduction = 'umap', cols = loupe_palette)
-
 ```
+
+![](README_files/figure-gfm/unnamed-chunk-1-1.png)<!-- -->
 
 ## Measuring DNA repair in PBMCs
 
 #### Identifying cell types from expresion data
 
-```{r umappbmc}
+``` r
 load("../data/pbmc/seurat/pbmc1.seurat.Rdata")
 
 # Filter out platelets from data
 pbmc1 <- subset(pbmc1, subset = celltype != "Platelet")
 DimPlot(pbmc1, reduction = 'umap', group.by = 'celltype', cols = colors)
-
 ```
+
+![](README_files/figure-gfm/umappbmc-1.png)<!-- -->
 
 #### Measuring DNA repair in PBMC cell types
 
-```{r bulkplots_pbmc}
+``` r
 df <- get_hairpin_coverage(pbmc1)
 
 df %>% mutate(adduct_position1 = 44,
@@ -149,7 +147,11 @@ df %>%
                      y_lab = "Average counts per cell") + 
         theme(legend.position = 'top') + 
         ggtitle("A:U repair")
+```
 
+![](README_files/figure-gfm/bulkplots_pbmc-1.png)<!-- -->
+
+``` r
 df %>%
         filter(hairpin == 'GU',
                position > 34) %>%
@@ -158,7 +160,11 @@ df %>%
                      y_lab = "Average counts per cell") + 
         theme(legend.position = 'top') + 
         ggtitle("G:U repair")
+```
 
+![](README_files/figure-gfm/bulkplots_pbmc-2.png)<!-- -->
+
+``` r
 df %>%
         filter(hairpin == 'riboG',
                position > 34) %>%
@@ -167,7 +173,11 @@ df %>%
                      y_lab = "Average counts per cell") + 
         theme(legend.position = 'top') + 
         ggtitle("Ribonucleotide repair")
+```
 
+![](README_files/figure-gfm/bulkplots_pbmc-3.png)<!-- -->
+
+``` r
 df %>%
         filter(hairpin == 'Abasic',
                position > 34) %>%
@@ -176,7 +186,11 @@ df %>%
                      y_lab = "Average counts per cell") + 
         theme(legend.position = 'top') + 
         ggtitle("Abasic repair")
+```
 
+![](README_files/figure-gfm/bulkplots_pbmc-4.png)<!-- -->
+
+``` r
 df %>%
         filter(hairpin == 'Normal',
                position > 34) %>%
@@ -185,12 +199,13 @@ df %>%
                      y_lab = "Average counts per cell") + 
         theme(legend.position = 'top') + 
         ggtitle("Normal substrate")
-
 ```
+
+![](README_files/figure-gfm/bulkplots_pbmc-5.png)<!-- -->
 
 #### Single cell DNA repair in PBMCs
 
-```{r singlecell_repair_PBMC}
+``` r
 repair.positions = c("Uracil-45", 
                      "riboG-44", 
                      "GU-45", 
@@ -224,8 +239,11 @@ df %>% full_join(repair_labels) %>%
 df %>% filter(repair %in% c("Uracil_45", "GU_45", "riboG_44", "Normal_45")) %>%
         activity_plot() + 
         facet_wrap(~label, ncol = 1, strip.position = "left") 
+```
 
+![](README_files/figure-gfm/singlecell_repair_PBMC-1.png)<!-- -->
 
+``` r
 df %>% filter(repair %in% c("Abasic_45", "Abasic_46")) %>%
         ggplot(aes(y = celltype, x = activity, color = celltype)) + 
         ggbeeswarm::geom_quasirandom(aes(alpha = label), size = 0.5, groupOnX = F,
@@ -242,7 +260,4 @@ df %>% filter(repair %in% c("Abasic_45", "Abasic_46")) %>%
                    alpha = 0.5, linetype = "dotted")
 ```
 
-
-
-
-
+![](README_files/figure-gfm/singlecell_repair_PBMC-2.png)<!-- -->
