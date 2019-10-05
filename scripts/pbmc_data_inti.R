@@ -90,6 +90,7 @@ pbmc2 <- add_simple_celltype(pbmc2, df)
 pbmc3 <- add_simple_celltype(pbmc3, df)
 
 
+
 # Save seurat objects
 save(pbmc1, file = "../data/pbmc/seurat/pbmc1.seurat.Rdata")
 save(pbmc2, file = "../data/pbmc/seurat/pbmc2.seurat.Rdata")

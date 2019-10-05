@@ -3,6 +3,9 @@ require(tidyverse)
 require(Seurat)
 require(colorblindr)
 require(scrunchy)
+require(ggplot2)
+require(cowplot)
+
 # Function to make matrix and filter mtx
 
 # cnt_path is path to the umi_tools output file
@@ -43,6 +46,7 @@ make_seurat <- function(mrna_path, haircut_path){
         
         # Calculating percent mitochondrial reads per cell 
         s[["percent.mt"]] <- PercentageFeatureSet(s, pattern = "^MT-")
+        s <- FindVariableFeatures(s, selection.method = "vst", nfeatures = 5000)
         
         #Return seurat object
         s
@@ -56,16 +60,31 @@ make_seurat <- function(mrna_path, haircut_path){
 # and celltypes
 
 analyze_seurat <- function(object, reference){
+        object <- init_seurat(object)
+        marker.anchors <- FindTransferAnchors(reference = reference, query = object, 
+                                              dims = 1:30)
+        predictions <- TransferData(anchorset = marker.anchors, refdata = Idents(reference), 
+                                    dims = 1:30)
         
-        # Scale data and run PCA
+        object <- AddMetaData(object, metadata = predictions)
         object <- ScaleData(object, verbose = FALSE)
-        object <- FindVariableFeatures(object, nfeatures = 2000)
         object <- RunPCA(object, npcs = 20, verbose = FALSE)
         # t-SNE and Clustering
-        object <- RunTSNE(object, reduction = "pca", dims = 1:20)
-        object <- RunUMAP(object, reduction = 'pca', dims = 1:20, spread = 2, min.dist = 1.5)
+        object <- RunUMAP(object, reduction = "pca", dims = 1:20)
         object <- FindNeighbors(object, reduction = "pca", dims = 1:20)
         object <- FindClusters(object, resolution = 0.5)
+        
+        object <- RunUMAP(object, reduction = 'pca', dims = 1:10, spread = 2, min.dist = 1.5)
+        
+        object
+        
+}
+
+
+analyze_seurat <- function(object, reference){
+        
+        object <- NormalizeData(object, verbose = FALSE)
+        object <- FindVariableFeatures(object, selection.method = "vst", nfeatures = 5000)
         
         #Find anchors and transfer celltype labels from reference data
         marker.anchors <- FindTransferAnchors(reference = reference, query = object, 
@@ -73,7 +92,17 @@ analyze_seurat <- function(object, reference){
         predictions <- TransferData(anchorset = marker.anchors, refdata = Idents(reference), 
                                     dims = 1:30)
         object <- AddMetaData(object, metadata = predictions)
-
+        
+        # Scale data and run PCA
+        object <- ScaleData(object, verbose = FALSE)
+        object <- RunPCA(object, npcs = 20, verbose = FALSE)
+        # t-SNE and Clustering
+        object <- RunUMAP(object, reduction = "pca", dims = 1:20)
+        object <- FindNeighbors(object, reduction = "pca", dims = 1:20)
+        object <- FindClusters(object, resolution = 0.5)
+        
+        object <- RunUMAP(object, reduction = 'pca', dims = 1:10, spread = 2, min.dist = 1.5)
+        
         object
 }
 
@@ -91,3 +120,107 @@ add_simple_celltype <- function(object, df, var = "predicted.id"){
         object
         
 }
+
+
+## Color palette
+# colors
+colors <- c(
+        palette_OkabeIto_black,
+        scales::brewer_pal(palette = "Paired")(12),
+        scales::brewer_pal(palette = "Set1")(9),
+        scales::brewer_pal(palette = "Set2")(8),
+        scales::brewer_pal(palette = "Dark2")(8)
+)
+loupe_palette <- rev(scales::brewer_pal(palette = "RdGy")(11)[c(1:5, 7)])
+
+
+# Bulk hairpin plot code
+haircut_plot <-  function(data, x, y, 
+                          col = "sample", 
+                          x_lab = "Hairpin Position", 
+                          y_lab = "Normalized Counts (count / total reads)", 
+                          pal =  colors, 
+                          xlim = c(0, 60),
+                          point = F){
+        ggplot(data, aes_string(x = x, y = y, color = col)) +
+                geom_line(alpha=.7, size = .8) + 
+                #        facet_wrap(~hairpin) + 
+                geom_vline(xintercept = 44, linetype="dotted", color = "black", size = 1) +
+                #geom_vline(xintercept = 10, linetype="dotted", color = "grey", size = 1) +
+                theme_cowplot() + 
+                theme(legend.position="top",
+                      legend.title = element_blank()) +
+                scale_color_manual(values = pal) +
+                #        scale_colour_manual(values = rev(cols[1:2])) + 
+                ylab(y_lab) + 
+                xlab(x_lab) +
+                xlim(xlim) + 
+                if(point) geom_point()
+}
+
+## get hairpin coverage from seurat object
+
+get_hairpin_coverage <- function(s, var = "celltype") {
+        
+        df <- FetchData(s, vars = var)
+        
+        colnames(df) <- str_replace(colnames(df), pattern = "-", replacement = "_")
+        colnames(df) <- str_replace(colnames(df), pattern = "repair_", replacement = "")
+        
+        cnts = GetAssayData(object = s, slot = "counts", assay = 'repair')
+        
+        category <- df[, var]
+        cell_ids <- rownames(df)
+        cell_ids <- split(rownames(df), category)
+        
+        res <- purrr::map_dfr(
+                cell_ids,
+                function(ids) {
+                        hairpin_info <- as.data.frame(rownames(cnts))
+                        hairpin_info$count <- Matrix::rowSums(cnts[, ids, drop = FALSE])
+                        hairpin_info
+                },
+                .id = "cell_id"
+        )
+        
+        colnames(res) <- c("celltype", "hairpin_pos", "count")
+        res <- separate(res, hairpin_pos, into = c("hairpin", "position")) %>%
+                mutate(position = as.double(position))
+        res <- as_tibble(res)
+        
+        df %>% group_by(celltype) %>% 
+                tally() -> t
+        full_join(res, t) %>%
+                mutate(avg_count = count/n) -> res
+        res
+}
+
+
+activity_plot <- function(df, vline = c(2, 4, 6)){
+        ggplot(df, aes(y = celltype, x = activity, color = celltype)) + 
+                ggbeeswarm::geom_quasirandom(size = 0.5, groupOnX = F) +
+                scale_color_manual(values = colors) + 
+                theme_cowplot() + 
+                theme(legend.position = 'none', 
+                      strip.placement = "outside",
+                      strip.background = element_blank(),
+                ) +
+                ylab(NULL) + 
+                geom_vline(xintercept = vline, color =  "#999999",
+                           alpha = 0.5, linetype = "dotted")
+        
+}
+
+get_single_cell_df <- function(s, feat){
+        df <- rownames_to_column(FetchData(pbmc1, feat), 
+                                 "cell_id") %>% 
+                mutate(cell_id = paste(cell_id, 1, sep = "_"))
+        colnames(df) <- str_replace(colnames(df), "-", "_")
+        colnames(df) <- str_replace(colnames(df), "repair_", "")
+        df
+}
+
+
+
+
+
