@@ -11,9 +11,63 @@ source("scripts/functions.R")
 library(ggpmisc)
 ```
 
+We developed an approach to simultaneously measure biochemical activities and mRNA abundance in single cells. We've modified the existing 10x Genomics 3´-gene expression kit (v2) to measure DNA repair activities in single cells by including DNA repair substrates in single-cell mRNA sequencing experiment.
+
+![Measuring DNA repair activities in single cells](images/protocol.png)
+
+Following GEM generation and reverse transcription, we isolate the DNA repair fragments from the mRNA by size separation. We then prepare a single-cell repair library that captures DNA repair products, intermediates, and products. 
+
+![DNA repair library prepartion](images/library_prep.png)
+
+
+## Processing raw data
+
+Following sequencing, the mRNA fastq files are processed using the 10x Genomics [cellranger](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger) pipeline.
+
+```{bash, eval = F}
+transcriptome="path/to/refdata-cellranger-GRC38-3.0.0"
+
+ cellranger count \
+     --id="sample_mrna" \
+     --fastqs="path/to/fastqs/" \
+     --sample="sample" \
+     --localcores=16 \
+     --localmem=35 \
+     --transcriptome=$transcriptome
+```
+
+The DNA repair libraries are processed using custom snakemake pipeline available [here](https://github.com/hesselberthlab/sc-haircut/tree/master/pipeline/haircut_pipeline). This pipeline produces a tsv with the following columns: 
+
+| gene | cell | count |
+|Uracil_1| AAACCTGAGACAAGCC | 4 |
+
+- gene is a concatenation of the substrate and the 5´ end alignment position. 
+- cell is the cell barcode sequence
+- count is the number of UMI counts for the gene and cell
+
+This file contains all known 10x cell barcodes present in the fastq files. To make filtered matrices to use with sc-RNA seq R packages like [Seurat](https://satijalab.org/seurat/), we used the following functions from our analysis package [scrunchy](https://scrunchy.hesselberthlab.org/). 
+
+```{r filter_matrix, eval = F}
+#Convert UMI-tools output to matrix format
+umitools_to_mtx(count_file = "path/to/count.tsv",
+                output_path = "path/to/mtx/")
+        
+# Filter repair matrix for cell barcodes from cellranger 3.0.0 output
+# barcodes.tsv file is present the output from cellranger
+# outs/filtered_feature_bc_matrix/
+
+filter_matrix(matrix_path = "path/to/mtx",
+              barcodes_path = "path/to/cell/barcodes.tsv",
+              output_path = "path/to/filtered_mtx")
+```
+
+The mRNA matrices from cellranger and the DNA repair matrices can be analyzed further using most multimodal sc-RNA-seq software. 
+
 ## Functional barnyard experiment
 
 #### Barnyard plot
+
+The Seurat object used in these plots was created [here](https://github.com/hesselberthlab/sc-haircut/blob/master/scripts/barnyard_data_init.R)
 ```{r classifycells}
 load("../data/barnyard/barnyard.seurat.object.Rdata")
 
@@ -76,6 +130,11 @@ df %>% filter(position == repair_position) %>%
                  vjust = .5, hjust = 0)
 ```
 
+```{r saveTable, include=FALSE,eval=F}
+df %>% select(cell_id, color) %>% distinct() %>%
+        write_tsv("../data/barnyard/celltypes_by_repair.tsv")
+```
+
 #### Bulk coverage
 
 ```{r bulk plots}
@@ -121,7 +180,9 @@ FeaturePlot(object = barnyard_seurat, features = c("repair_Uracil-45", "repair_r
 
 ## Measuring DNA repair in PBMCs
 
-#### Identifying cell types from expresion data
+#### Identifying cell types from expression data
+
+The seurat object used below was created [here](https://github.com/hesselberthlab/sc-haircut/blob/master/scripts/pbmc_data_inti.R).
 
 ```{r umappbmc}
 load("../data/pbmc/seurat/pbmc1.seurat.Rdata")

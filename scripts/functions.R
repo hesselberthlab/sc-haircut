@@ -60,28 +60,6 @@ make_seurat <- function(mrna_path, haircut_path){
 # and celltypes
 
 analyze_seurat <- function(object, reference){
-        object <- init_seurat(object)
-        marker.anchors <- FindTransferAnchors(reference = reference, query = object, 
-                                              dims = 1:30)
-        predictions <- TransferData(anchorset = marker.anchors, refdata = Idents(reference), 
-                                    dims = 1:30)
-        
-        object <- AddMetaData(object, metadata = predictions)
-        object <- ScaleData(object, verbose = FALSE)
-        object <- RunPCA(object, npcs = 20, verbose = FALSE)
-        # t-SNE and Clustering
-        object <- RunUMAP(object, reduction = "pca", dims = 1:20)
-        object <- FindNeighbors(object, reduction = "pca", dims = 1:20)
-        object <- FindClusters(object, resolution = 0.5)
-        
-        object <- RunUMAP(object, reduction = 'pca', dims = 1:10, spread = 2, min.dist = 1.5)
-        
-        object
-        
-}
-
-
-analyze_seurat <- function(object, reference){
         
         object <- NormalizeData(object, verbose = FALSE)
         object <- FindVariableFeatures(object, selection.method = "vst", nfeatures = 5000)
