@@ -15,7 +15,11 @@ repair fragments from the mRNA by size separation. We then prepare a
 single-cell repair library that captures DNA repair products,
 intermediates, and products.
 
+<center>
+
 ![DNA repair library prepartion](images/library_prep.png)
+
+</center>
 
 ## Processing raw data
 
@@ -41,14 +45,10 @@ available
 [here](https://github.com/hesselberthlab/sc-haircut/tree/master/pipeline/haircut_pipeline).
 This pipeline produces a tsv with the following columns:
 
-gene | cell | count |
-
-|Uracil\_1| AAACCTGAGACAAGCC | 4 |
-
-  - gene is a concatenation of the substrate and the 5´ end alignment
-    position.
-  - cell is the cell barcode sequence
-  - count is the number of UMI counts for the gene and cell
+  - gene: concatenation of the substrate and the 5´ end alignment
+    position
+  - cell: cell barcode sequence
+  - count: number of UMI counts for the gene and cell
 
 This file contains all known 10x cell barcodes present in the fastq
 files. To make filtered matrices to use with sc-RNA seq R packages like
