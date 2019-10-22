@@ -44,8 +44,7 @@ repair_genes <- repair_genes$KEGG_BASE_EXCISION_REPAIR
 repair_genes <- c(repair_genes, "RNASEH2A", "RNASEH2B", "RNASEH2C")
 
 # filtering for significanct BER genes only
-marks %>% filter(gene %in% repair_genes,
-                 p_val_adj < 0.05) -> ber
+marks %>% filter(gene %in% repair_genes) -> ber
 
 # filtering for repair positions only
 repair_pos <- c("Uracil-45", "GU-45", "Abasic-45", "Abasic-46", "riboG-44")
@@ -114,9 +113,7 @@ all_dna %>% filter(gene %in% repair_pos,
                    p_val_adj < 0.05) -> all_dna_rep
 
 # Filter for repair genes
-all_mark %>% filter(gene %in% repair_genes, 
-                    p_val_adj < 0.05) ->
-        all_rep
+all_mark %>% filter(gene %in% repair_genes) -> all_rep
 
 #Split for plotting
 all_rep %>% group_by(cluster) %>%
@@ -184,9 +181,9 @@ res %>% filter(p_val_adj < 0.05) %>%
         full_join(df) -> df
 
 # Filter for repair positions and save
-df %>% filter(gene %in% repair_pos) %>%
+df %>% filter(gene %in% repair_pos) %>%  
         arrange(sample, gene, p_val_adj) %>%
-        write_tsv(., path = "data/tables/all_pbmcs_REPAIR_data_only.tsv")
+        write_tsv(., path = "../data/tables/all_pbmcs_REPAIR_data_only.tsv")
 
 # Filter for hairpins presenet in all samples (AU, GU, riboG, Abasic, Normal)
 # TI and CI were not included
@@ -196,7 +193,7 @@ df %>% separate(gene, into = c("hairpin", "position")) %>%
                               "riboG", "Abasic", "Normal")) %>%
         unite(gene, hairpin, position, sep = "-") %>%
         arrange(sample, gene, p_val_adj) %>%
-        write_tsv(., path = "data/tables/all_pbmcs_REPAIR_all_pos.tsv")
+        write_tsv(., path = "../data/tables/all_pbmcs_REPAIR_all_pos.tsv")
 
 ## Filtering celltype vs all cells for hairpins present in all samples and 
 ## Combing tables made above 
@@ -237,3 +234,6 @@ all_dna %>% mutate(sample = "all_cells") %>%
                 "sample" ) %>%
         arrange(sample, gene, p_val_adj) %>%
        write_tsv(., path = "../data/tables/all_pbmcs_REPAIR_repair_pos_vsallcells.tsv")
+
+
+

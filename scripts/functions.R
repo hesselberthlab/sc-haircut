@@ -162,6 +162,7 @@ get_hairpin_coverage <- function(s, var = "celltype") {
         )
         
         colnames(res) <- c("celltype", "hairpin_pos", "count")
+        res <- mutate(res, hairpin_pos = str_replace(hairpin_pos, "-biotin", "Biotin"))
         res <- separate(res, hairpin_pos, into = c("hairpin", "position")) %>%
                 mutate(position = as.double(position))
         res <- as_tibble(res)
@@ -208,8 +209,8 @@ activity_plot <- function(df, vline = c(2, 4, 6), lab = NULL){
         p
 }
 
-get_single_cell_df <- function(s, feat){
-        df <- rownames_to_column(FetchData(pbmc1, feat), 
+get_single_cell_df <- function(s, feat, ...){
+        df <- rownames_to_column(FetchData(s, feat, ...), 
                                  "cell_id") %>% 
                 mutate(cell_id = paste(cell_id, 1, sep = "_"))
         colnames(df) <- str_replace(colnames(df), "-", "_")
