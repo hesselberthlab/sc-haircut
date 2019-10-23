@@ -151,8 +151,8 @@ df %>% group_by(hairpin) %>% nest() %>%
                                    ggtitle(.y))) -> plots
 
 plot_grid(plotlist = plots$plot)
-ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc2.pdf",
-       height = 9, width = 13, units = 'in', useDingbats = F)
+#ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc2.pdf",
+#       height = 9, width = 13, units = 'in', useDingbats = F)
 
 # PBMC3
 cells <- Read10X("../data/pbmc/pbmc3/filtered_pbmc_haircut/",
@@ -200,8 +200,8 @@ df %>% group_by(hairpin) %>% nest() %>%
                                    ggtitle(.y))) -> plots
 
 plot_grid(plotlist = plots$plot)
-ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc3.pdf",
-       height = 9, width = 13, units = 'in', useDingbats = F)
+#ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc3.pdf",
+#       height = 9, width = 13, units = 'in', useDingbats = F)
 
 
 ### PST1 sample for MGMT activity
@@ -253,16 +253,16 @@ df %>% group_by(hairpin) %>% nest() %>%
                                    ggtitle(.y))) -> plots
 
 plot_grid(plotlist = plots$plot)
-ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc2_pst1.pdf",
-       height = 9, width = 13, units = 'in', useDingbats = F)
+#ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc2_pst1.pdf",
+#       height = 9, width = 13, units = 'in', useDingbats = F)
 
 
 ### PST1 sample for MGMT activity - PBMC3
 
-cells <- Read10X("~/hesselberthlab/projects/10x_haircut/20190221/data/haircut/PBM2_PST1/filtered/",
+cells <- Read10X("../data/pbmc/pbmc2_pst1/filtered_haircut",
                  gene.column = 1)
 
-empty <- Read10X("~/hesselberthlab/projects/10x_haircut/20190221/data/haircut/PBM2_PST1/", 
+empty <- Read10X("../data/pbmc/pbmc2_pst1/umitools_counts.tsv.gz", 
                  gene.column = 1)
 empty <- empty[, !colnames(empty) %in% colnames(cells)]
 
@@ -307,8 +307,8 @@ df %>% group_by(hairpin) %>% nest() %>%
 
 plot_grid(plotlist = plots$plot)
 
-ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc3_pst1.pdf",
-       height = 9, width = 13, units = 'in', useDingbats = F)
+#ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc3_pst1.pdf",
+#       height = 9, width = 13, units = 'in', useDingbats = F)
 
 
 

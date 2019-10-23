@@ -45,5 +45,3 @@ barnyard_seurat <- RunUMAP(object = barnyard_seurat, dims = 1:6, spread = 2, min
 
 #Save seurat object for downstream use
 save(barnyard_seurat, file = "../data/barnyard/barnyard.seurat.object.Rdata")
-
-
