@@ -161,3 +161,9 @@ save(pbmc15, file = "../data/pbmc/seurat/pbmc15.seurat.Rdata")
 save(pbmc30, file = "../data/pbmc/seurat/pbmc30.seurat.Rdata")
 save(pbmc60, file = "../data/pbmc/seurat/pbmc60.seurat.Rdata")
 
+# Make matrix and filtered matrix for PBMC2-pst1 sample for empty drop analysis
+make_mtx(cnt_path = "../data/pbmc/pbmc2_pst1/umitools_counts.tsv.gz",
+         mtx_path = "../data/pbmc/pbmc2_pst1/haircut_mtx",
+         bc_path = "../data/pbmc/pbmc2/filtered_feature_bc_matrix/barcodes.tsv.gz",
+         filter_path = "../data/pbmc2_pst1/filtered_haircut")
+

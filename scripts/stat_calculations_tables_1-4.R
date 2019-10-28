@@ -235,5 +235,54 @@ all_dna %>% mutate(sample = "all_cells") %>%
         arrange(sample, gene, p_val_adj) %>%
        write_tsv(., path = "../data/tables/all_pbmcs_REPAIR_repair_pos_vsallcells.tsv")
 
+# Which significance values repeat?
+
+dat <- read_tsv( "../data/tables/all_pbmcs_REPAIR_repair_pos_vsallcells.tsv")
+dat %>% filter(sample != "all_cells") %>%
+        group_by(gene, cluster) %>%
+        summarise(number_of_sig = n()) %>% 
+        filter(number_of_sig == 3)
+
+# gene      cluster number_of_sig
+# Abasic-45 DC                  3
+# Abasic-45 NK                  3
+# Abasic-45 T                   3
+# riboG-44  B                   3
+# riboG-44  DC                  3
+# riboG-44  NK                  3
+# Uracil-45 Mono                3
+# Uracil-45 NK                  3
+# Uracil-45 T                   3
+
+dat <- read_tsv( "../data/tables/all_pbmcs_REPAIR_data_only.tsv")
+dat %>% filter(sample != "all_cells") %>%
+        group_by(gene, celltype1, celltype2) %>%
+        summarise(number_of_sig = n()) %>% 
+        filter(number_of_sig == 2) %>% View()
+#       gene    celltype1       celltype2       num_of_sig
+#       Abasic-45	B	DC	3
+#	Abasic-45	B	NK	3
+#	Abasic-45	T	DC	3
+#	Abasic-45	T	Mono	3
+#	Abasic-45	T	NK	3
+#	Abasic-46	B	Mono	3
+#	riboG-44	B	Mono	3
+#	riboG-44	B	NK	3
+#	riboG-44	Mono	DC	3
+#	riboG-44	NK	DC	3
+#	riboG-44	NK	Mono	3
+#	riboG-44	T	B	3
+#	riboG-44	T	DC	3
+#       riboG-44	T	NK	3
+#	Uracil-45	B	Mono	3
+#	Uracil-45	B	NK	3
+#	Uracil-45	Mono	DC	3
+#	Uracil-45	NK	Mono	3
+#	Uracil-45	T	DC	3
+#	Uracil-45	T	Mono	3
+#	Uracil-45	T	NK	3
+
+dat %>% arrange(gene, celltype1, celltype2) %>% View()
+
 
 

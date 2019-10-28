@@ -12,8 +12,8 @@ single-cell mRNA sequencing experiment.
 
 Following GEM generation and reverse transcription, we isolate the DNA
 repair fragments from the mRNA by size separation. We then prepare a
-single-cell repair library that captures DNA repair products,
-intermediates, and products.
+single-cell repair library that captures DNA repair intermediates and
+products.
 
 <center>
 
@@ -91,19 +91,28 @@ df <- rownames_to_column(as.data.frame(t(as.matrix(GetAssayData(barnyard_seurat,
         mutate(position = as.double(position),
                count = as.double(count))
 
-
+# Add repair positions based on average signal
 repair_position = data_frame(hairpin = c('Uracil2', 'riboG2'),
                              repair_position = c(45, 44))
 
 df %>% left_join(repair_position) %>%
         filter(position == repair_position) -> rt
 
+# Get cutoffs to determine cell type by repair
+# Cutoff is > 5% of the maximum signal for each substrate
 rt %>% group_by(hairpin, position) %>%
         summarize(max_count = max(count)) %>%
         mutate(cut_off = round(max_count * .05)) -> cutoffs
 
+# Define ribo cutoff and uracil cutoff
 r = cutoffs$cut_off[1]
 u = cutoffs$cut_off[2]
+
+# Define cell types:
+# UNGKO = >5% maximum singal on ribo substrate and < 5% of the max on uracil substrate
+# RNASEH2CKO = >5% maximum singal on uracil substrate and < 5% of the max on ribo substrate
+# Both = >5% maximum singal on ribo substrate and >5% of the max on uracil substrate
+# Low signal = <5% maximum singal on ribo substrate and <5% of the max on uracil substrate
 
 rt %>% select(-position, -repair_position) %>% 
         spread(hairpin, count) %>%
@@ -116,6 +125,7 @@ rt %>% select(-position, -repair_position) %>%
 df <- left_join(df, color_df) %>%
         left_join(repair_position)
 
+# count number of cells in each category
 df %>% filter(hairpin == "Uracil2", 
                           position == 1) %>%
         group_by(color) %>%
@@ -123,10 +133,7 @@ df %>% filter(hairpin == "Uracil2",
         ungroup() %>%
         rename('Cell Type' = color)-> table
 
-repair_position = tribble(~hairpin, ~repair_position,
-                          "Uracil2", 45,
-                          "riboG2", 44)
-
+# Make barnyard plot
 df %>% filter(position == repair_position) %>%
         select(cell_id, hairpin, color, count) %>%
         spread(hairpin, count) %>% 
@@ -147,11 +154,15 @@ df %>% filter(position == repair_position) %>%
 #### Bulk coverage
 
 ``` r
+# Add celltype to seurat object
 barnyard_seurat$cell_id_from_repair <- color_df$color 
 barnyard_seurat$celltype <- barnyard_seurat$cell_id_from_repair
+
+# Get average hairpin coverage by cell type above defined by repair
 bulk_df = get_hairpin_coverage(barnyard_seurat) %>%
         mutate(count_1000 = count/1000)
 
+# Make coverage plots
 bulk_df %>% filter(hairpin == "Uracil2",
                    celltype %in% c("RNASEH2KO", "UNGKO"),
                    position > 33) %>%
@@ -175,17 +186,19 @@ bulk_df %>% filter(hairpin == "riboG2",
               legend.title = element_blank()) + 
         ggtitle("Ribonucleotide") -> p2
 
-plot_grid(p1, p2)
+plot_grid(p1, p2, nrow = 2)
 ```
 
-![](README_files/figure-gfm/bulk%20plots-1.png)<!-- -->
+<img src="README_files/figure-gfm/bulk plots-1.png" style="display: block; margin: auto;" />
 
 #### mRNA expression vs DNA repair
 
 ``` r
+# Plot mRNA and repair coverage on UMAP plot using seurat functions
+
 FeaturePlot(object = barnyard_seurat, features = c("repair_Uracil2-45", "repair_riboG2-44",
                                                    "UNG", "RNASEH2C"), 
-            reduction = 'umap', cols = loupe_palette)
+            reduction = 'umap', cols = loupe_palette, order = T)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
@@ -198,10 +211,13 @@ The seurat object used below was created
 [here](https://github.com/hesselberthlab/sc-haircut/blob/master/scripts/pbmc_data_inti.R).
 
 ``` r
+# Load PBMC seurat object
 load("../data/pbmc/seurat/pbmc1.seurat.Rdata")
 
 # Filter out platelets from data
 pbmc1 <- subset(pbmc1, subset = celltype != "Platelet")
+
+# Plot UMAP colored by cell type
 DimPlot(pbmc1, reduction = 'umap', group.by = 'celltype', cols = colors)
 ```
 
@@ -210,12 +226,15 @@ DimPlot(pbmc1, reduction = 'umap', group.by = 'celltype', cols = colors)
 #### Measuring DNA repair in PBMC cell types
 
 ``` r
+# Get hairpin coverage by cell type
 df <- get_hairpin_coverage(pbmc1)
 
+# add adduction position for plotting and filter out platelets
 df %>% mutate(adduct_position1 = 44,
                adduct_position2 = -1) %>%
         filter(celltype != "Platelet") -> df
 
+# Make coverage plots
 df %>%
         filter(hairpin == 'Uracil',
                position > 34) %>%
@@ -283,6 +302,8 @@ df %>%
 #### Single cell DNA repair in PBMCs
 
 ``` r
+# Get dataframe of repair position activity values, cell ids, 
+# and cell types from seurat object
 repair.positions = c("Uracil-45", 
                      "riboG-44", 
                      "GU-45", 
@@ -313,16 +334,17 @@ df %>% full_join(repair_labels) %>%
                                    "Abasic repair short-patch",
                                    "Unmodified substrate")) -> df
 
+# Plot activities 
 df %>% filter(repair %in% c("Uracil_45", "GU_45", "riboG_44", "Normal_45")) %>%
         activity_plot() + 
         facet_wrap(~label, ncol = 1, strip.position = "left") 
 ```
 
-![](README_files/figure-gfm/singlecell_repair_PBMC-1.png)<!-- -->
+<img src="README_files/figure-gfm/singlecell_repair_PBMC-1.png" style="display: block; margin: auto;" />
 
 ``` r
 df %>% filter(repair %in% c("Abasic_45", "Abasic_46")) %>%
         activity_plot(lab = label) 
 ```
 
-![](README_files/figure-gfm/singlecell_repair_PBMC-2.png)<!-- -->
+![](README_files/figure-gfm/single-cell-repair-abasic-1.png)<!-- -->
