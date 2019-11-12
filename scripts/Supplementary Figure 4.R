@@ -1,7 +1,6 @@
 # Supplementary Figure 4
 ## Dilution and timecourse of PBMC data
-
-## Filtering data and making Seurat objects
+source("scripts/functions.R")
 
 # Load seurat objects
 load("../data/pbmc/seurat/pbmc15.seurat.Rdata")
@@ -72,8 +71,8 @@ dldf %>% filter(hairpin == "Uracil",
         ylab("Substrate concentration (nM)")
 
 #Save plot
-#ggsave("plots/pbmc/uracil_repair_beswarm_concentration_time_newcelltype.pdf",
-#       height = 8, width = 9, units = 'in', useDingbats = F)
+ggsave("~/hesselberthlab/projects/10x_haircut/20190819/plots/pbmc/uracil_repair_beswarm_concentration_time_newcelltype.pdf",
+       height = 8, width = 9, units = 'in', useDingbats = F)
 
 #Make plot
 dldf %>% filter(hairpin == "riboG",
@@ -91,8 +90,31 @@ dldf %>% filter(hairpin == "riboG",
         ylab("Substrate concentration (nM)")
 
 #Save plot
-#ggsave("plots/pbmc/riboG_repair_beswarm_concentration_time_newcelltype.pdf",
-#       height = 8, width = 9, units = 'in', useDingbats = F)
+ggsave("~/hesselberthlab/projects/10x_haircut/20190819/plots/pbmc/riboG_repair_beswarm_concentration_time_newcelltype.pdf",
+       height = 8, width = 9, units = 'in', useDingbats = F)
+
+dldf %>% filter(celltype != "Platelet",
+                amt_added == 25) %>%
+        ggplot(aes(y = as.factor(time), x = value, color = celltype)) + 
+        ggbeeswarm::geom_quasirandom(groupOnX = F) + 
+        facet_grid(celltype~hairpin) + 
+        scale_color_manual(values = colors) + 
+        cowplot::theme_cowplot() + 
+        theme(legend.position = 'none',
+              strip.background.y = element_blank()) + 
+        geom_vline(xintercept = c(2, 4, 6), alpha = 0.5, 
+                   color = "#999999", linetype = "dashed") + 
+        xlab("Activity") + 
+        ylab("Substrate concentration (nM)")
+
+
+ggsave("~/hesselberthlab/projects/10x_haircut/20190819/plots/pbmc/uracil_riboG_25nm_bytime.pdf",
+       height = 8, width = 6, units = 'in', useDingbats = F)
+
+#Save plot
+ggsave("~/hesselberthlab/projects/10x_haircut/20190819/plots/pbmc/uracil_repair_beswarm_concentration_time_newcelltype.pdf",
+       height = 8, width = 9, units = 'in', useDingbats = F)
+
 
 ### Slope plot
 
@@ -141,21 +163,21 @@ stat_df %>% filter(term == "amt_added",
         geom_vline(xintercept = c(0.0, 0.1, 0.2), alpha = 0.5, linetype = 'dashed',color = "#999999")
 
 #Save plot
-#ggsave("plots/pbmc/slope_beeswarm_bytime_newcelltypes.pdf",
+#ggsave("~/hesselberthlab/projects/10x_haircut/20190819/plots/pbmc/slope_beeswarm_bytime_newcelltypes.pdf",
 #       height = 8, width = 6, units = 'in', useDingbats = F)
 
 # Make and save umap plots
-pbmc15 <- subset(pbmc15, subset = celltype_seurat != "Platelet")
-DimPlot(pbmc15, reduction = 'umap', cols = colors, group.by = "celltype_seurat")
+pbmc15 <- subset(pbmc15, subset = celltype != "Platelet")
+DimPlot(pbmc15, reduction = 'umap', cols = colors, group.by = "celltype")
 #ggsave("plots/pbmc/UMAP_15min_new_celltype.pdf",
 #       height = 4, width = 5, units = 'in', useDingbats = F)
 
-pbmc30 <- subset(pbmc30, subset = celltype_seurat != "Platelet")
-DimPlot(pbmc30, reduction = 'umap', cols = colors, group.by = "celltype_seurat")
-#ggsave("plots/pbmc/UMAP_30min_new_celltype.pdf",
+pbmc30 <- subset(pbmc30, subset = celltype != "Platelet")
+DimPlot(pbmc30, reduction = 'umap', cols = colors, group.by = "celltype")
+#ggsave("~/hesselberthlab/projects/10x_haircut/20190819/plots/pbmc/UMAP_30min_new_celltype.pdf",
 #       height = 4, width = 5, units = 'in', useDingbats = F)
 
-pbmc60 <- subset(pbmc60, subset = celltype_seurat != "Platelet")
-DimPlot(pbmc60, reduction = 'umap', cols = colors, group.by = "celltype_seurat")
+pbmc60 <- subset(pbmc60, subset = celltype != "Platelet")
+DimPlot(pbmc60, reduction = 'umap', cols = colors, group.by = "celltype")
 #ggsave("plots/pbmc/UMAP_60min_new_celltype.pdf",
 #       height = 4, width = 5, units = 'in', useDingbats = F)

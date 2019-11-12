@@ -348,3 +348,384 @@ df %>% filter(repair %in% c("Abasic_45", "Abasic_46")) %>%
 ```
 
 ![](README_files/figure-gfm/single-cell-repair-abasic-1.png)<!-- -->
+
+# Session info
+
+  - Typical install time for all packages: ~30 minutes
+  - Expected run time for full data fastq files -\> expression matrices:
+    ~6-24 hours
+  - Expected run time for full data expression matrices -\> plots: ~10
+    minutes
+  - Demo expression matrices found in scrunchy R package.
+  - No required non-standard hardware but platform LSF significantly
+    reduces run time.
+
+Software tested only on R version 3.5 using the following
+    packages.
+
+``` r
+devtools::session_info()
+```
+
+    ## ─ Session info ──────────────────────────────────────────────────────────
+    ##  setting  value                       
+    ##  version  R version 3.5.1 (2018-07-02)
+    ##  os       macOS High Sierra 10.13.6   
+    ##  system   x86_64, darwin15.6.0        
+    ##  ui       X11                         
+    ##  language (EN)                        
+    ##  collate  en_US.UTF-8                 
+    ##  ctype    en_US.UTF-8                 
+    ##  tz       America/Denver              
+    ##  date     2019-11-12                  
+    ## 
+    ## ─ Packages ──────────────────────────────────────────────────────────────
+    ##  package              * version    date       lib
+    ##  ape                    5.3        2019-03-17 [1]
+    ##  assertthat             0.2.1      2019-03-21 [1]
+    ##  backports              1.1.4      2019-04-10 [1]
+    ##  beeswarm               0.2.3      2016-04-25 [1]
+    ##  bibtex                 0.4.2      2017-06-30 [1]
+    ##  Biobase                2.42.0     2018-10-30 [1]
+    ##  BiocGenerics           0.28.0     2018-10-30 [1]
+    ##  BiocNeighbors          1.0.0      2018-10-30 [1]
+    ##  BiocParallel           1.16.6     2019-02-17 [1]
+    ##  bitops                 1.0-6      2013-08-17 [1]
+    ##  broom                  0.5.2      2019-04-07 [1]
+    ##  callr                  3.2.0      2019-03-15 [1]
+    ##  caTools                1.17.1.2   2019-03-06 [1]
+    ##  cellranger             1.1.0      2016-07-27 [1]
+    ##  circlize               0.4.6      2019-04-03 [1]
+    ##  cli                    1.1.0      2019-03-19 [1]
+    ##  cluster                2.1.0      2019-06-19 [1]
+    ##  codetools              0.2-16     2018-12-24 [1]
+    ##  colorblindr          * 0.1.0      2019-05-09 [1]
+    ##  colorspace           * 1.4-1      2019-03-18 [1]
+    ##  ComplexHeatmap         1.20.0     2018-10-30 [1]
+    ##  cowplot              * 0.9.99     2019-06-25 [1]
+    ##  crayon                 1.3.4      2017-09-16 [1]
+    ##  data.table             1.12.2     2019-04-07 [1]
+    ##  DelayedArray           0.8.0      2018-10-30 [1]
+    ##  DelayedMatrixStats     1.4.0      2018-10-30 [1]
+    ##  desc                   1.2.0      2018-05-01 [1]
+    ##  devtools               2.0.2      2019-04-08 [1]
+    ##  digest                 0.6.20     2019-07-04 [1]
+    ##  dplyr                * 0.8.3      2019-07-04 [1]
+    ##  dynamicTreeCut         1.63-1     2016-03-11 [1]
+    ##  edgeR                  3.24.3     2019-01-02 [1]
+    ##  evaluate               0.14       2019-05-28 [1]
+    ##  fitdistrplus           1.0-14     2019-01-23 [1]
+    ##  forcats              * 0.4.0      2019-02-17 [1]
+    ##  fs                     1.3.1      2019-05-06 [1]
+    ##  future                 1.14.0     2019-07-02 [1]
+    ##  future.apply           1.3.0      2019-06-18 [1]
+    ##  gbRd                   0.4-11     2012-10-01 [1]
+    ##  gdata                  2.18.0     2017-06-06 [1]
+    ##  generics               0.0.2      2018-11-29 [1]
+    ##  GenomeInfoDb           1.18.2     2019-02-12 [1]
+    ##  GenomeInfoDbData       1.2.0      2018-12-19 [1]
+    ##  GenomicRanges          1.34.0     2018-10-30 [1]
+    ##  GetoptLong             0.1.7      2018-06-10 [1]
+    ##  ggbeeswarm             0.6.0      2017-08-07 [1]
+    ##  ggplot2              * 3.2.0      2019-06-16 [1]
+    ##  ggpmisc              * 0.3.1      2019-04-02 [1]
+    ##  ggrepel                0.8.1      2019-05-07 [1]
+    ##  ggridges               0.5.1      2018-09-27 [1]
+    ##  ggsignif               0.5.0      2019-02-20 [1]
+    ##  GlobalOptions          0.1.0      2018-06-09 [1]
+    ##  globals                0.12.4     2018-10-11 [1]
+    ##  glue                   1.3.1      2019-03-12 [1]
+    ##  gplots                 3.0.1.1    2019-01-27 [1]
+    ##  gridExtra              2.3        2017-09-09 [1]
+    ##  gtable                 0.3.0      2019-03-25 [1]
+    ##  gtools                 3.8.1      2018-06-26 [1]
+    ##  haven                  2.1.0      2019-02-19 [1]
+    ##  HDF5Array              1.10.1     2018-12-05 [1]
+    ##  hms                    0.4.2      2018-03-10 [1]
+    ##  htmltools              0.3.6      2017-04-28 [1]
+    ##  htmlwidgets            1.3        2018-09-30 [1]
+    ##  httr                   1.4.0      2018-12-11 [1]
+    ##  ica                    1.0-2      2018-05-24 [1]
+    ##  igraph                 1.2.4.1    2019-04-22 [1]
+    ##  IRanges                2.16.0     2018-10-30 [1]
+    ##  irlba                  2.3.3      2019-02-05 [1]
+    ##  jsonlite               1.6        2018-12-07 [1]
+    ##  KernSmooth             2.23-15    2015-06-29 [1]
+    ##  knitr                  1.23       2019-05-18 [1]
+    ##  labeling               0.3        2014-08-23 [1]
+    ##  lattice                0.20-38    2018-11-04 [1]
+    ##  lazyeval               0.2.2      2019-03-15 [1]
+    ##  limma                  3.38.3     2018-12-02 [1]
+    ##  listenv                0.7.0      2018-01-21 [1]
+    ##  lmtest                 0.9-37     2019-04-30 [1]
+    ##  locfit                 1.5-9.1    2013-04-20 [1]
+    ##  lsei                   1.2-0      2017-10-23 [1]
+    ##  lubridate              1.7.4      2018-04-11 [1]
+    ##  magrittr               1.5        2014-11-22 [1]
+    ##  MASS                   7.3-51.4   2019-03-31 [1]
+    ##  Matrix                 1.2-17     2019-03-22 [1]
+    ##  matrixStats            0.54.0     2018-07-23 [1]
+    ##  memoise                1.1.0      2017-04-21 [1]
+    ##  metap                  1.1        2019-02-06 [1]
+    ##  modelr                 0.1.4      2019-02-18 [1]
+    ##  multcomp               1.4-10     2019-03-05 [1]
+    ##  MultiAssayExperiment   1.8.3      2019-02-13 [1]
+    ##  munsell                0.5.0      2018-06-12 [1]
+    ##  mvtnorm                1.0-11     2019-06-19 [1]
+    ##  nlme                   3.1-140    2019-05-12 [1]
+    ##  npsurv                 0.4-0      2017-10-14 [1]
+    ##  pbapply                1.4-0      2019-02-05 [1]
+    ##  pillar                 1.4.2      2019-06-29 [1]
+    ##  pkgbuild               1.0.3      2019-03-20 [1]
+    ##  pkgconfig              2.0.2      2018-08-16 [1]
+    ##  pkgload                1.0.2      2018-10-29 [1]
+    ##  plotly                 4.9.0      2019-04-10 [1]
+    ##  plyr                   1.8.4      2016-06-08 [1]
+    ##  png                    0.1-7      2013-12-03 [1]
+    ##  prettyunits            1.0.2      2015-07-13 [1]
+    ##  processx               3.4.0      2019-07-03 [1]
+    ##  ps                     1.3.0      2018-12-21 [1]
+    ##  purrr                * 0.3.2      2019-03-15 [1]
+    ##  qvalue                 2.14.1     2019-01-10 [1]
+    ##  R.methodsS3            1.7.1      2016-02-16 [1]
+    ##  R.oo                   1.22.0     2018-04-22 [1]
+    ##  R.utils                2.9.0      2019-06-13 [1]
+    ##  R6                     2.4.0      2019-02-14 [1]
+    ##  RANN                   2.6.1      2019-01-08 [1]
+    ##  RColorBrewer           1.1-2      2014-12-07 [1]
+    ##  Rcpp                   1.0.2      2019-07-25 [1]
+    ##  RCurl                  1.95-4.12  2019-03-04 [1]
+    ##  Rdpack                 0.11-0     2019-04-14 [1]
+    ##  readr                * 1.3.1      2018-12-21 [1]
+    ##  readxl                 1.3.1      2019-03-13 [1]
+    ##  remotes                2.1.0      2019-06-24 [1]
+    ##  reshape2               1.4.3      2017-12-11 [1]
+    ##  reticulate             1.12       2019-04-12 [1]
+    ##  rhdf5                  2.26.2     2019-01-02 [1]
+    ##  Rhdf5lib               1.4.3      2019-03-25 [1]
+    ##  rjson                  0.2.20     2018-06-08 [1]
+    ##  rlang                  0.4.0      2019-06-25 [1]
+    ##  rmarkdown              1.13       2019-05-22 [1]
+    ##  ROCR                   1.0-7      2015-03-26 [1]
+    ##  rprojroot              1.3-2      2018-01-03 [1]
+    ##  rstudioapi             0.10       2019-03-19 [1]
+    ##  rsvd                   1.0.1      2019-06-02 [1]
+    ##  Rtsne                  0.15       2018-11-10 [1]
+    ##  rvest                  0.3.4      2019-05-15 [1]
+    ##  S4Vectors              0.20.1     2018-11-09 [1]
+    ##  sandwich               2.5-1      2019-04-06 [1]
+    ##  scales                 1.0.0      2018-08-09 [1]
+    ##  scater                 1.10.1     2019-01-04 [1]
+    ##  scran                  1.10.2     2019-01-04 [1]
+    ##  scrunchy             * 0.0.0.9000 2019-07-15 [1]
+    ##  sctransform            0.2.0      2019-05-13 [1]
+    ##  SDMTools               1.1-221.1  2019-04-18 [1]
+    ##  sessioninfo            1.1.1      2018-11-05 [1]
+    ##  Seurat               * 3.0.3.9004 2019-06-25 [1]
+    ##  shape                  1.4.4      2018-02-07 [1]
+    ##  SingleCellExperiment   1.4.1      2019-01-04 [1]
+    ##  statmod                1.4.32     2019-05-29 [1]
+    ##  stringi                1.4.3      2019-03-12 [1]
+    ##  stringr              * 1.4.0      2019-02-10 [1]
+    ##  SummarizedExperiment   1.12.0     2018-10-30 [1]
+    ##  survival               2.44-1.1   2019-04-01 [1]
+    ##  testthat               2.1.1      2019-04-23 [1]
+    ##  TH.data                1.0-10     2019-01-21 [1]
+    ##  tibble               * 2.1.3      2019-06-06 [1]
+    ##  tidyr                * 0.8.3      2019-03-01 [1]
+    ##  tidyselect             0.2.5      2018-10-11 [1]
+    ##  tidyverse            * 1.2.1      2017-11-14 [1]
+    ##  tsne                   0.1-3      2016-07-15 [1]
+    ##  umap                   0.2.2.0    2019-05-13 [1]
+    ##  usethis                1.5.0      2019-04-07 [1]
+    ##  vipor                  0.4.5      2017-03-22 [1]
+    ##  viridis                0.5.1      2018-03-29 [1]
+    ##  viridisLite            0.3.0      2018-02-01 [1]
+    ##  withr                  2.1.2      2018-03-15 [1]
+    ##  xfun                   0.8        2019-06-25 [1]
+    ##  xml2                   1.2.0      2018-01-24 [1]
+    ##  XVector                0.22.0     2018-10-30 [1]
+    ##  yaml                   2.2.0      2018-07-25 [1]
+    ##  zlibbioc               1.28.0     2018-10-30 [1]
+    ##  zoo                    1.8-6      2019-05-28 [1]
+    ##  source                                  
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.1)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  Bioconductor                            
+    ##  Bioconductor                            
+    ##  Bioconductor                            
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  Github (clauswilke/colorblindr@1ac3d4d) 
+    ##  CRAN (R 3.5.2)                          
+    ##  Bioconductor                            
+    ##  Github (wilkelab/cowplot@57feb8e)       
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  Bioconductor                            
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.1)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  Bioconductor                            
+    ##  Bioconductor                            
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.1)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.1)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.1)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.1)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.1)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  Bioconductor                            
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.1)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  Bioconductor                            
+    ##  Bioconductor                            
+    ##  Github (hesselberthlab/scrunchy@b2f8cea)
+    ##  Github (ChristophH/sctransform@8e48f49) 
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  Github (satijalab/seurat@9a9f439)       
+    ##  CRAN (R 3.5.0)                          
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.1)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  CRAN (R 3.5.2)                          
+    ##  CRAN (R 3.5.0)                          
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.0)                          
+    ##  Bioconductor                            
+    ##  CRAN (R 3.5.2)                          
+    ## 
+    ## [1] /Library/Frameworks/R.framework/Versions/3.5/Resources/library
+
+Additional software dependencies:
+
+  - Python v3
+  - Snakemake
+  - cellranger v3.0.2
+  - bedtools v2.26
+  - samtools v1.9
+  - bowtie2 v 2.3.2
+  - umi\_tools from CGAT
+  - cutadapt v1.16

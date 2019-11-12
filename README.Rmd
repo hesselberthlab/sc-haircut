@@ -314,3 +314,28 @@ df %>% filter(repair %in% c("Uracil_45", "GU_45", "riboG_44", "Normal_45")) %>%
 df %>% filter(repair %in% c("Abasic_45", "Abasic_46")) %>%
         activity_plot(lab = label) 
 ```
+
+####### Session info
+
+- Typical install time for all packages: ~30 minutes
+- Expected run time for full data fastq files -> expression matrices: ~6-24 hours
+- Expected run time for full data expression matrices -> plots: ~10 minutes
+- Demo expression matrices found in scrunchy R package.
+- No required non-standard hardware but platform LSF significantly reduces run time.
+
+Software tested only on R version 3.5 using the following packages.
+
+```{r}
+devtools::session_info()
+```
+
+Additional software dependencies:
+
+- Python v3
+- Snakemake
+- cellranger v3.0.2
+- bedtools v2.26
+- samtools v1.9
+- bowtie2 v 2.3.2
+- umi_tools from CGAT
+- cutadapt v1.16
