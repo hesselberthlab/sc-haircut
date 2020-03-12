@@ -285,4 +285,71 @@ dat %>% filter(sample != "all_cells") %>%
 dat %>% arrange(gene, celltype1, celltype2) %>% View()
 
 
+## Stat calculatings for time and dilution
+
+load("../data/pbmc/seurat/pbmc15.seurat.Rdata")
+Idents(pbmc15) <- pbmc15$celltype
+pbmc15 <- subset(pbmc15, subset = celltype != "Platelet")
+
+load("../data/pbmc/seurat/pbmc30.seurat.Rdata")
+Idents(pbmc30) <- pbmc30$celltype
+pbmc30 <- subset(pbmc30, subset = celltype != "Platelet")
+
+load("../data/pbmc/seurat/pbmc60.seurat.Rdata")
+Idents(pbmc60) <- pbmc60$celltype
+pbmc60 <- subset(pbmc60, subset = celltype != "Platelet")
+
+dna <- purrr::map2(list(pbmc15, pbmc30, pbmc60), c(15, 30, 60), ~rownames_to_column(
+        FindAllMarkers(.x, assay = "repair"), "cell_id") %>%
+                mutate(time = .y))
+
+dna <- reduce(dna, rbind)
+
+## Calculate pairwise for each time
+res = map2(comb$var1, comb$var2, ~ mark(pbmc15, .x, .y, assay = 'repair'))
+res = reduce(res, rbind)
+
+# Filter of significant adjusted p values
+res %>% filter(p_val_adj < 0.05) %>%
+        mutate(time = 15) -> df
+
+# Repeat for other samples
+res = map2(comb$var1, comb$var2, ~ mark(pbmc30, .x, .y, assay = 'repair'))
+res = reduce(res, rbind)
+
+res %>% filter(p_val_adj < 0.05) %>%
+        mutate(time = 30) %>%
+        full_join(df) -> df
+
+res = map2(comb$var1, comb$var2, ~ mark(pbmc60, .x, .y, assay = 'repair'))
+res = reduce(res, rbind)
+
+res %>% filter(p_val_adj < 0.05) %>%
+        mutate(time = 60) %>%
+        full_join(df) -> df
+
+repair_position = c("Uracil1-45", 
+                          "Uracil2-45", 
+                          "Uracil3-45", 
+                          "Uracil4-45", 
+                          "Uracil5-45", 
+                          "riboG1-44", 
+                          "riboG2-44",
+                          "riboG3-44", 
+                          "riboG4-44",
+                          "riboG5-44", 
+                          "CI-45",
+                          "TI-45",
+                          "Abasic-45",
+                          "Abasic-46",
+                          "Normal-45",
+                          "GU-45")
+
+df %>% filter(gene %in% repair_position) %>%
+        arrange(gene, time, p_val_adj) %>% 
+        write_tsv("../data/tables/timecourse_pbmc_repair_positions_pairwise.tsv")
+
+dna %>% filter(gene %in% repair_position) %>%
+        arrange(gene, time, p_val_adj) %>% 
+        write_tsv("../data/tables/timecourse_pbmc_repair_positions_allothercells.tsv")
 

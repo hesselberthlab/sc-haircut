@@ -1,321 +1,202 @@
 # Supplementary Figure 8
-## Bulk plots vs empty drops -- finding biological signal
-
-library(tidyverse)
-library(Seurat)
-library(cowplot)
-library(scrunchy)
-source("scripts/functions.R")
-
-# Read in cell data
-cells <- Read10X("../data/pbmc/pbmc1/filtered_pbmc_haircut/",
-                gene.column = 1)
-
-# Read in empty drops from repair pipeline (before filtering)
-empty <- Read10X("../data/pbmc/pbmc1/pbmc1_haircut/", gene.column = 1)
-
-# Filter out drops with cells
-empty <- empty[, !colnames(empty) %in% colnames(cells)]
-
-# Make matrices into bulk dataframes
-celldf <- as.data.frame(rownames(cells))
-celldf$counts <- Matrix::rowSums(cells)
-celldf$drop <- rep("cell", nrow(celldf))
-colnames(celldf) <- c("hp_pos", "count", "drop")
-
-# Make df total counts per drop for empty drops
-df <- as.data.frame(colnames(empty))
-df$counts <- Matrix::colSums(empty)
-
-# Sort df by total counts per cell and get the top ~4000 drops
-df %>% arrange(desc(counts)) %>% slice(1:ncol(cells)) -> empty4000
-
-# Make empty drop matrix into bulk dataframe
-emptydf <- as.data.frame(rownames(empty))
-emptydf$counts <- Matrix::rowSums(empty[, empty4000$`colnames(empty)`])
-emptydf$drop <- rep("empty", nrow(emptydf))
-colnames(emptydf) <- c("hp_pos", "count", "drop")
-
-# Combind df
-df <- rbind(celldf, emptydf)
-
-n <- ncol(cells)
-
-# Get average counts per position
-df %>% separate(hp_pos, into = c("hairpin", "position")) %>%
-        mutate(position = as.double(position),
-               avg_count = count /n) -> df
-
-# Make bulk plots
-c = c(colors[1], "#999999")
-haircut_plot(df, x = "position", y = "avg_count", col = "drop", 
-             point = T, pal = c) + 
-        facet_grid(~hairpin)
-
-# Make bulk plots - separately 
-df %>% group_by(hairpin) %>% nest() %>%
-        mutate(plot = map2(data, hairpin, ~haircut_plot(.x, x = "position", 
-                                       y = "avg_count", 
-                                       col = "drop", 
-                                       point = T, pal = c, 
-                                       y_lab = "Average counts per drop") + 
-                                   ggtitle(.y))) -> plots
-
-plot_grid(plotlist = plots$plot)
-
-#Save plots
-#ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc1.pdf",
-#       height = 9, width = 10, units = 'in', useDingbats = F)
-
-## Calculating stats for repair vs not repair
-
-# Get matrix of empy ~4000 drops
-e <- empty[, empty4000$`colnames(empty)`]
-number <- ncol(e)
-
-#Turn empty and cell matrices into dataframes
-e <- rownames_to_column(as.data.frame(e), "hp_pos") %>%
-        gather(cellid, count, -hp_pos) %>%
-        mutate(drop = 'empty')
-sc_df <- rownames_to_column(as.data.frame(cells), "hp_pos") %>%
-        gather(cellid, count, -hp_pos) %>%
-        mutate(drop = 'cell') %>%
-        full_join(e)
-
-#Function to get wilcoson results
-tidy_wilcoxon <- function(x, y) {
-        broom::tidy(suppressWarnings(stats::wilcox.test(x, y)))
-}
-
-# get stats per position comparing cells to empty drops by position
-sc_df %>% arrange(drop) %>%
-        mutate(number = rep(1:1707834, 2)) %>%
-        select(-cellid) %>%
-        spread(drop, count) %>%
-        group_by(hp_pos) %>%
-        group_modify(~ tidy_wilcoxon(.x$cell, .x$empty)) -> pval
-
-# Calculate qvalues
- qval <- qvalue::qvalue(pval$p.value, pi0 = 1)
- 
- # add qvalues to pval results
- pval %>% ungroup() %>%
-         mutate(q.value = qval$qvalues) -> pval
- 
- pval %>% filter(qvalue < 0.05)
- # All sites are significant qvalues except for 31 sites
-
-## PBMC2 bulk plots
-cells <- Read10X("../data/pbmc/pbmc2/filtered_pbmc_haircut/",
-                 gene.column = 1)
-
-empty <- Read10X("../data/pbmc/pbmc2/pbmc2_haircit/", gene.column = 1)
-empty <- empty[, !colnames(empty) %in% colnames(cells)]
-
-celldf <- as.data.frame(rownames(cells))
-celldf$counts <- Matrix::rowSums(cells)
-celldf$drop <- rep("cell", nrow(celldf))
-colnames(celldf) <- c("hp_pos", "count", "drop")
-
-
-df <- as.data.frame(colnames(empty))
-df$counts <- Matrix::colSums(empty)
-
-df %>% arrange(desc(counts)) %>% slice(1:ncol(cells)) -> empty4000
-
-emptydf <- as.data.frame(rownames(empty))
-emptydf$counts <- Matrix::rowSums(empty[, empty4000$`colnames(empty)`])
-emptydf$drop <- rep("empty", nrow(emptydf))
-colnames(emptydf) <- c("hp_pos", "count", "drop")
-
-df <- rbind(celldf, emptydf)
-
-n <- ncol(cells)
-
-df %>% mutate(hp_pos = str_replace(hp_pos, "_biotin", "Biotin")) %>%
-        separate(hp_pos, into = c("hairpin", "position")) %>%
-        mutate(position = as.double(position),
-               avg_count = count /n) -> df
-
-c = c(colors[1], "#999999")
-haircut_plot(df, x = "position", y = "avg_count", col = "drop", 
-             point = T, pal = c) + 
-        facet_grid(~hairpin)
-
-df %>% group_by(hairpin) %>% nest() %>%
-        mutate(plot = map2(data, hairpin, ~haircut_plot(.x, x = "position", 
-                                                        y = "avg_count", 
-                                                        col = "drop", 
-                                                        point = T, pal = c, 
-                                                        y_lab = "Average counts per drop") + 
-                                   ggtitle(.y))) -> plots
-
-plot_grid(plotlist = plots$plot)
-#ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc2.pdf",
-#       height = 9, width = 13, units = 'in', useDingbats = F)
-
-# PBMC3
-cells <- Read10X("../data/pbmc/pbmc3/filtered_pbmc_haircut/",
-                 gene.column = 1)
-
-empty <- Read10X("../data/pbmc/pbmc3/pbmc3_haircut/", gene.column = 1)
-empty <- empty[, !colnames(empty) %in% colnames(cells)]
-
-celldf <- as.data.frame(rownames(cells))
-celldf$counts <- Matrix::rowSums(cells)
-celldf$drop <- rep("cell", nrow(celldf))
-colnames(celldf) <- c("hp_pos", "count", "drop")
-
-
-df <- as.data.frame(colnames(empty))
-df$counts <- Matrix::colSums(empty)
-
-df %>% arrange(desc(counts)) %>% slice(1:ncol(cells)) -> empty4000
-
-emptydf <- as.data.frame(rownames(empty))
-emptydf$counts <- Matrix::rowSums(empty[, empty4000$`colnames(empty)`])
-emptydf$drop <- rep("empty", nrow(emptydf))
-colnames(emptydf) <- c("hp_pos", "count", "drop")
-
-df <- rbind(celldf, emptydf)
-
-n <- ncol(cells)
-
-df %>% mutate(hp_pos = str_replace(hp_pos, "_biotin", "Biotin")) %>%
-        separate(hp_pos, into = c("hairpin", "position")) %>%
-        mutate(position = as.double(position),
-               avg_count = count /n) -> df
-
-c = c(colors[1], "#999999")
-haircut_plot(df, x = "position", y = "avg_count", col = "drop", 
-             point = T, pal = c) + 
-        facet_grid(~hairpin)
-
-df %>% group_by(hairpin) %>% nest() %>%
-        mutate(plot = map2(data, hairpin, ~haircut_plot(.x, x = "position", 
-                                                        y = "avg_count", 
-                                                        col = "drop", 
-                                                        point = T, pal = c, 
-                                                        y_lab = "Average counts per drop") + 
-                                   ggtitle(.y))) -> plots
-
-plot_grid(plotlist = plots$plot)
-#ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc3.pdf",
-#       height = 9, width = 13, units = 'in', useDingbats = F)
-
-
-### PST1 sample for MGMT activity
-
-cells <- Read10X("~/hesselberthlab/projects/10x_haircut/20190221/data/haircut/PBM1_PST1/filtered/",
-                 gene.column = 1)
-
-empty <- Read10X("~/hesselberthlab/projects/10x_haircut/20190221/data/haircut/PBM1_PST1/", 
-                 gene.column = 1)
-empty <- empty[, !colnames(empty) %in% colnames(cells)]
-
-celldf <- as.data.frame(rownames(cells))
-celldf$counts <- Matrix::rowSums(cells)
-celldf$drop <- rep("cell", nrow(celldf))
-colnames(celldf) <- c("hp_pos", "count", "drop")
-
-
-df <- as.data.frame(colnames(empty))
-df$counts <- Matrix::colSums(empty)
-
-df %>% arrange(desc(counts)) %>% slice(1:ncol(cells)) -> empty4000
-
-emptydf <- as.data.frame(rownames(empty))
-emptydf$counts <- Matrix::rowSums(empty[, empty4000$`colnames(empty)`])
-emptydf$drop <- rep("empty", nrow(emptydf))
-colnames(emptydf) <- c("hp_pos", "count", "drop")
-
-df <- rbind(celldf, emptydf)
-
-n <- ncol(cells)
-
-df %>% mutate(hp_pos = str_replace(hp_pos, "_biotin", "Biotin"),
-              hp_pos = str_replace(hp_pos, "pst1.", '')) %>%
-        separate(hp_pos, into = c("hairpin", "position"), sep = "_") %>%
-        mutate(position = as.double(position),
-               avg_count = count /n) -> df
-
-c = c(colors[1], "#999999")
-haircut_plot(df, x = "position", y = "avg_count", col = "drop", 
-             point = T, pal = c) + 
-        facet_grid(~hairpin)
-
-df %>% group_by(hairpin) %>% nest() %>%
-        mutate(plot = map2(data, hairpin, ~haircut_plot(.x, x = "position", 
-                                                        y = "avg_count", 
-                                                        col = "drop", 
-                                                        point = T, pal = c, 
-                                                        y_lab = "Average counts per drop") + 
-                                   ggtitle(.y))) -> plots
-
-plot_grid(plotlist = plots$plot)
-#ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc2_pst1.pdf",
-#       height = 9, width = 13, units = 'in', useDingbats = F)
-
-
-### PST1 sample for MGMT activity - PBMC3
-
-cells <- Read10X("../data/pbmc/pbmc2_pst1/filtered_haircut",
-                 gene.column = 1)
-
-empty <- Read10X("../data/pbmc/pbmc2_pst1/umitools_counts.tsv.gz", 
-                 gene.column = 1)
-empty <- empty[, !colnames(empty) %in% colnames(cells)]
-
-celldf <- as.data.frame(rownames(cells))
-celldf$counts <- Matrix::rowSums(cells)
-celldf$drop <- rep("cell", nrow(celldf))
-colnames(celldf) <- c("hp_pos", "count", "drop")
-
-
-df <- as.data.frame(colnames(empty))
-df$counts <- Matrix::colSums(empty)
-
-df %>% arrange(desc(counts)) %>% slice(1:ncol(cells)) -> empty4000
-
-emptydf <- as.data.frame(rownames(empty))
-emptydf$counts <- Matrix::rowSums(empty[, empty4000$`colnames(empty)`])
-emptydf$drop <- rep("empty", nrow(emptydf))
-colnames(emptydf) <- c("hp_pos", "count", "drop")
-
-df <- rbind(celldf, emptydf)
-
-n <- ncol(cells)
-
-df %>% mutate(hp_pos = str_replace(hp_pos, "_biotin", "Biotin"),
-              hp_pos = str_replace(hp_pos, "pst1.", '')) %>%
-        separate(hp_pos, into = c("hairpin", "position"), sep = "_") %>%
-        mutate(position = as.double(position),
-               avg_count = count /n) -> df
-
-c = c(colors[1], "#999999")
-haircut_plot(df, x = "position", y = "avg_count", col = "drop", 
-             point = T, pal = c) + 
-        facet_grid(~hairpin)
-
-df %>% group_by(hairpin) %>% nest() %>%
-        mutate(plot = map2(data, hairpin, ~haircut_plot(.x, x = "position", 
-                                                        y = "avg_count", 
-                                                        col = "drop", 
-                                                        point = T, pal = c, 
-                                                        y_lab = "Average counts per drop") + 
-                                   ggtitle(.y))) -> plots
-
-plot_grid(plotlist = plots$plot)
-
-#ggsave("~/hesselberthlab/projects/10x_haircut/paper_figures/plots/bulk_emptydrops_allsub/bulk_emptydrops_pbmc3_pst1.pdf",
-#       height = 9, width = 13, units = 'in', useDingbats = F)
-
-
-
-
-
-
-
-
-
-                
+# PBMC replicates at lower substrate concentration
+
+source('scripts/functions.R')
+library(ggpmisc)
+
+load("../data/pbmc/seurat/pbmc2.seurat.Rdata")
+load("../data/pbmc/seurat/pbmc3.seurat.Rdata")
+
+# Filter out platelets from data
+pbmc2 <- subset(pbmc2, subset = celltype != "Platelet")
+DimPlot(pbmc2, reduction = 'umap', group.by = 'celltype', cols = colors)
+
+
+pbmc3 <- subset(pbmc3, subset = celltype != "Platelet")
+DimPlot(pbmc3, reduction = 'umap', group.by = 'celltype', cols = colors)
+
+## Bulk plots
+
+df <- get_hairpin_coverage(pbmc2)
+
+df %>% mutate(adduct_position1 = 44,
+              adduct_position2 = -1) %>%
+        filter(celltype != "Platelet") -> df
+
+df %>%
+        filter(hairpin == 'Uracil',
+               position > 34) %>%
+        haircut_plot(., x = "position", y = "avg_count", point = TRUE,
+                     xlim = c(35, 55), pal = colors, col = 'celltype', 
+                     y_lab = "Average counts per cell") + 
+        theme(legend.position = 'top') + 
+        ggtitle("U:A repair")
+
+df %>%
+        filter(hairpin == 'GU',
+               position > 34) %>%
+        haircut_plot(., x = "position", y = "avg_count", point = TRUE,
+                     xlim = c(35, 55), pal = colors, col = 'celltype', 
+                     y_lab = "Average counts per cell") + 
+        theme(legend.position = 'top') + 
+        ggtitle("U:G repair")
+
+df %>%
+        filter(hairpin == 'riboG',
+               position > 34) %>%
+        haircut_plot(., x = "position", y = "avg_count", point = TRUE,
+                     xlim = c(35, 55), pal = colors, col = 'celltype', 
+                     y_lab = "Average counts per cell") + 
+        theme(legend.position = 'top') + 
+        ggtitle("Ribonucleotide repair")
+
+df %>%
+        filter(hairpin == 'Abasic',
+               position > 34) %>%
+        haircut_plot(., x = "position", y = "avg_count", point = TRUE,
+                     xlim = c(35, 55), pal = colors, col = 'celltype', 
+                     y_lab = "Average counts per cell") + 
+        theme(legend.position = 'top') + 
+        ggtitle("Abasic repair")
+
+df %>%
+        filter(hairpin == 'Normal',
+               position > 34) %>%
+        haircut_plot(., x = "position", y = "avg_count", point = TRUE,
+                     xlim = c(35, 55), pal = colors, col = 'celltype', 
+                     y_lab = "Average counts per cell") + 
+        theme(legend.position = 'top') + 
+        ggtitle("Unmodified substrate")
+
+## Single cell plots
+
+repair.positions = c("Uracil-45", 
+                     "riboG-44", 
+                     "GU-45", 
+                     "Abasic-46", 
+                     "Abasic-45", 
+                     "Normal-45")
+df <- get_single_cell_df(pbmc2, feat = c(repair.positions, "celltype"))
+
+#Make tidy data
+df %>% gather(repair, activity, -celltype, -cell_id) -> df
+
+#Add labels for plotting
+repair_labels = tribble(~repair, ~label,
+                        "Uracil_45", "U:A repair",
+                        "GU_45", "U:G repair",
+                        "riboG_44", "Ribonucelotide repair",
+                        "Abasic_46", "Abasic repair long-patch",
+                        "Abasic_45", "Abasic repair short-patch",
+                        "Normal_45", "Unmodified substrate"
+)
+
+# Put samples in correct order
+df %>% full_join(repair_labels) %>%        
+        mutate(label = fct_relevel(label, "U:A repair", 
+                                   "U:G repair", 
+                                   "Ribonucelotide repair", 
+                                   "Abasic repair long-patch",
+                                   "Abasic repair short-patch",
+                                   "Unmodified substrate")) -> df
+
+df %>% filter(repair %in% c("Uracil_45", "GU_45", "riboG_44", "Normal_45")) %>%
+        activity_plot() + 
+        facet_wrap(~label, ncol = 1, strip.position = "left") 
+
+df %>% filter(repair %in% c("Abasic_45", "Abasic_46")) %>%
+        activity_plot(lab = label) 
+
+## Plots for PBMC3 
+
+## Bulk plots
+
+df <- get_hairpin_coverage(pbmc3)
+
+df %>% mutate(adduct_position1 = 44,
+              adduct_position2 = -1) %>%
+        filter(celltype != "Platelet") -> df
+
+df %>%
+        filter(hairpin == 'Uracil',
+               position > 34) %>%
+        haircut_plot(., x = "position", y = "avg_count", point = TRUE,
+                     xlim = c(35, 55), pal = colors, col = 'celltype', 
+                     y_lab = "Average counts per cell") + 
+        theme(legend.position = 'top') + 
+        ggtitle("U:A repair")
+
+df %>%
+        filter(hairpin == 'GU',
+               position > 34) %>%
+        haircut_plot(., x = "position", y = "avg_count", point = TRUE,
+                     xlim = c(35, 55), pal = colors, col = 'celltype', 
+                     y_lab = "Average counts per cell") + 
+        theme(legend.position = 'top') + 
+        ggtitle("U:G repair")
+
+df %>%
+        filter(hairpin == 'riboG',
+               position > 34) %>%
+        haircut_plot(., x = "position", y = "avg_count", point = TRUE,
+                     xlim = c(35, 55), pal = colors, col = 'celltype', 
+                     y_lab = "Average counts per cell") + 
+        theme(legend.position = 'top') + 
+        ggtitle("Ribonucleotide repair")
+
+df %>%
+        filter(hairpin == 'Abasic',
+               position > 34) %>%
+        haircut_plot(., x = "position", y = "avg_count", point = TRUE,
+                     xlim = c(35, 55), pal = colors, col = 'celltype', 
+                     y_lab = "Average counts per cell") + 
+        theme(legend.position = 'top') + 
+        ggtitle("Abasic repair")
+
+df %>%
+        filter(hairpin == 'Normal',
+               position > 34) %>%
+        haircut_plot(., x = "position", y = "avg_count", point = TRUE,
+                     xlim = c(35, 55), pal = colors, col = 'celltype', 
+                     y_lab = "Average counts per cell") + 
+        theme(legend.position = 'top') + 
+        ggtitle("Unmodified substrate")
+
+## Single cell plots
+
+repair.positions = c("Uracil-45", 
+                     "riboG-44", 
+                     "GU-45", 
+                     "Abasic-46", 
+                     "Abasic-45", 
+                     "Normal-45")
+df <- get_single_cell_df(pbmc3, feat = c(repair.positions, "celltype"))
+
+#Make tidy data
+df %>% gather(repair, activity, -celltype, -cell_id) -> df
+
+#Add labels for plotting
+repair_labels = tribble(~repair, ~label,
+                        "Uracil_45", "U:A repair",
+                        "GU_45", "U:G repair",
+                        "riboG_44", "Ribonucelotide repair",
+                        "Abasic_46", "Abasic repair long-patch",
+                        "Abasic_45", "Abasic repair short-patch",
+                        "Normal_45", "Unmodified substrate"
+)
+
+# Put samples in correct order
+df %>% full_join(repair_labels) %>%        
+        mutate(label = fct_relevel(label, "U:A repair", 
+                                   "U:G repair", 
+                                   "Ribonucelotide repair", 
+                                   "Abasic repair long-patch",
+                                   "Abasic repair short-patch",
+                                   "Unmodified substrate")) -> df
+
+df %>% filter(repair %in% c("Uracil_45", "GU_45", "riboG_44", "Normal_45")) %>%
+        activity_plot() + 
+        facet_wrap(~label, ncol = 1, strip.position = "left") 
+
+df %>% filter(repair %in% c("Abasic_45", "Abasic_46")) %>%
+        activity_plot(lab = label) 
